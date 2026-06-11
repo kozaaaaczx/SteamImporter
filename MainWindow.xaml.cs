@@ -5,6 +5,7 @@ using System.Text;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Windows;
@@ -35,6 +36,7 @@ namespace Nowy_folder__8_
         private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
 
         private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
+        private CancellationTokenSource? _searchDebounce;
 
         public MainWindow()
         {
@@ -281,25 +283,28 @@ namespace Nowy_folder__8_
             }
         }
 
-        private async void SearchButton_Click(object sender, RoutedEventArgs e)
+        private async void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            await SearchGamesAsync(SearchTextBox.Text);
-        }
+            _searchDebounce?.Cancel();
+            _searchDebounce = new CancellationTokenSource();
+            var token = _searchDebounce.Token;
 
-        private async void SearchTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
+            try
             {
-                e.Handled = true;
-                await SearchGamesAsync(SearchTextBox.Text);
+                await Task.Delay(300, token);
+                if (!token.IsCancellationRequested)
+                    await SearchGamesAsync(SearchTextBox.Text);
             }
+            catch (TaskCanceledException) { }
         }
 
         private async Task SearchGamesAsync(string term)
         {
+            term = term.Trim();
             if (string.IsNullOrWhiteSpace(term))
             {
-                MessageBox.Show("Please enter a game name or ID to search.", "Search Input Empty", MessageBoxButton.OK, MessageBoxImage.Warning);
+                SearchResultsListBox.ItemsSource = null;
+                StatusTextBlock.Text = "Status: Ready";
                 return;
             }
 

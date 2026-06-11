@@ -330,22 +330,12 @@
                         </Grid.RowDefinitions>
 
                         <Grid Grid.Row="0" Margin="0,0,0,10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
                             <TextBox x:Name="SearchTextBox" 
                                      Style="{StaticResource ModernTextBoxStyle}" 
                                      FontSize="12" 
                                      Padding="8,6"
-                                     Margin="0,0,8,0"
-                                     KeyDown="SearchTextBox_KeyDown"
+                                     TextChanged="SearchTextBox_TextChanged"
                                      Tag="Search game by name or AppID..." />
-                            <Button Grid.Column="1" 
-                                    Content="Search" 
-                                    Style="{StaticResource ModernButtonStyle}" 
-                                    Padding="10,6"
-                                    Click="SearchButton_Click" />
                         </Grid>
 
                         <ListBox Grid.Row="1" 
