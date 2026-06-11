@@ -1,0 +1,493 @@
+<Window x:Class="Nowy_folder__8_.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Nowy_folder__8_"
+        mc:Ignorable="d"
+        Title="Steam File Importer" 
+        Height="650" 
+        Width="800"
+        MinWidth="750"
+        MinHeight="550"
+        WindowStartupLocation="CenterScreen"
+        Background="#121212"
+        SourceInitialized="Window_SourceInitialized">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="BgBrush" Color="#121212" />
+        <SolidColorBrush x:Key="CardBgBrush" Color="#1e1e1e" />
+        <SolidColorBrush x:Key="TextPrimaryBrush" Color="#FFFFFF" />
+        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#9e9e9e" />
+        
+        <SolidColorBrush x:Key="AccentBrush" Color="#00b4d8" />
+        <SolidColorBrush x:Key="AccentHoverBrush" Color="#90e0ef" />
+        <SolidColorBrush x:Key="AccentLightBrush" Color="#103040" />
+        
+        <SolidColorBrush x:Key="ButtonBgBrush" Color="#2a2a2a" />
+        <SolidColorBrush x:Key="ButtonHoverBgBrush" Color="#3a3a3a" />
+        <SolidColorBrush x:Key="BorderBrush" Color="#2d2d2d" />
+        <SolidColorBrush x:Key="ConsoleBgBrush" Color="#0a0a0a" />
+
+        <Style TargetType="TabControl">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+
+        <Style TargetType="TabItem">
+            <Setter Property="HeaderTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <ContentPresenter Content="{TemplateBinding Content}"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Padding" Value="16,10"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter x:Name="contentPresenter"
+                                              ContentSource="Header"
+                                              Focusable="False"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource AccentBrush}"/>
+                                <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModernButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource ButtonBgBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="Padding" Value="14,8" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource ButtonHoverBgBrush}" />
+                    <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
+                    <Setter Property="Cursor" Value="Hand" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="AccentButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+            <Setter Property="Foreground" Value="#0b132b" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="24,12" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource AccentHoverBrush}" />
+                    <Setter Property="Cursor" Value="Hand" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ModernTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Background" Value="{StaticResource CardBgBrush}" />
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="10,8" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5">
+                            <ScrollViewer x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="DarkListBoxStyle" TargetType="ListBox">
+            <Setter Property="Background" Value="#171717"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="4"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBox">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="5">
+                            <ScrollViewer Focusable="false" Padding="{TemplateBinding Padding}">
+                                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="2"/>
+            <Setter Property="Margin" Value="0,1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4"
+                                SnapsToDevicePixels="true">
+                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter TargetName="border" Property="Background" Value="#252525"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource AccentLightBrush}"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+                                <Setter TargetName="border" Property="BorderThickness" Value="1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <DataTemplate x:Key="GameResultTemplate">
+            <Grid Margin="6,4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" Source="{Binding tiny_image}" Width="60" Height="22" Stretch="UniformToFill" Margin="0,0,10,0"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding name}" FontWeight="Bold" FontSize="12" Foreground="#ffffff" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{Binding id, StringFormat='AppID: \{0\}'}" FontSize="10" Foreground="{StaticResource TextSecondaryBrush}"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="140" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,16">
+            <TextBlock Text="STEAM FILE IMPORTER" 
+                       FontSize="22" 
+                       FontWeight="ExtraBold" 
+                       Foreground="{StaticResource AccentBrush}"/>
+            <TextBlock Text="Manage and import Steam manifest and Lua files easily" 
+                       FontSize="13" 
+                       Foreground="{StaticResource TextSecondaryBrush}" 
+                       Margin="0,4,0,0"/>
+        </StackPanel>
+
+        <Border Grid.Row="1" 
+                Background="{StaticResource CardBgBrush}" 
+                CornerRadius="8" 
+                Padding="12,10" 
+                BorderBrush="{StaticResource BorderBrush}" 
+                BorderThickness="1"
+                Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+                           Text="STEAM DIRECTORY PATH" 
+                           FontSize="10" 
+                           FontWeight="Bold" 
+                           Foreground="{StaticResource TextSecondaryBrush}" 
+                           Margin="0,0,0,4"/>
+
+                <TextBox Grid.Row="1" Grid.Column="0" 
+                         x:Name="SteamPathTextBox" 
+                         Style="{StaticResource ModernTextBoxStyle}" 
+                         IsReadOnly="True" 
+                         FontSize="12"
+                         Margin="0,0,10,0" />
+
+                <Button Grid.Row="1" Grid.Column="1" 
+                        Content="Browse..." 
+                        Style="{StaticResource ModernButtonStyle}" 
+                        Click="BrowseButton_Click" />
+            </Grid>
+        </Border>
+
+        <TabControl Grid.Row="2" Margin="0,0,0,16">
+            <TabItem Header="Local File Import">
+                <Grid Margin="0,10,0,0">
+                    <Border Grid.Row="0"
+                            Background="{StaticResource CardBgBrush}" 
+                            CornerRadius="8" 
+                            BorderBrush="{StaticResource BorderBrush}" 
+                            BorderThickness="1" 
+                            Padding="24">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                            <TextBlock Text="Manual File Import" 
+                                       FontSize="16" 
+                                       FontWeight="Bold" 
+                                       Foreground="White" 
+                                       HorizontalAlignment="Center" 
+                                       Margin="0,0,0,8"/>
+                            <TextBlock Text="Select local .manifest files and copy them to 'depotcache', followed by .lua script files to 'config\stplug-in'." 
+                                       FontSize="12" 
+                                       Foreground="{StaticResource TextSecondaryBrush}" 
+                                       TextAlignment="Center" 
+                                       TextWrapping="Wrap" 
+                                       Margin="0,0,0,24" />
+                            
+                            <Button Content="Choose and Import Files" 
+                                    Style="{StaticResource AccentButtonStyle}" 
+                                    Width="300"
+                                    HorizontalAlignment="Center"
+                                    Click="ImportButton_Click" />
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="Online Search &amp; Downloader">
+                <Grid Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="280" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0" Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="SearchTextBox" 
+                                     Style="{StaticResource ModernTextBoxStyle}" 
+                                     FontSize="12" 
+                                     Padding="8,6"
+                                     Margin="0,0,8,0"
+                                     KeyDown="SearchTextBox_KeyDown"
+                                     Tag="Search game by name or AppID..." />
+                            <Button Grid.Column="1" 
+                                    Content="Search" 
+                                    Style="{StaticResource ModernButtonStyle}" 
+                                    Padding="10,6"
+                                    Click="SearchButton_Click" />
+                        </Grid>
+
+                        <ListBox Grid.Row="1" 
+                                 x:Name="SearchResultsListBox" 
+                                 Style="{StaticResource DarkListBoxStyle}" 
+                                 ItemTemplate="{StaticResource GameResultTemplate}" 
+                                 SelectionChanged="SearchResultsListBox_SelectionChanged" />
+                    </Grid>
+
+                    <Border Grid.Column="2" 
+                            Background="{StaticResource CardBgBrush}" 
+                            CornerRadius="8" 
+                            BorderBrush="{StaticResource BorderBrush}" 
+                            BorderThickness="1" 
+                            Padding="16">
+                        <Grid>
+                            <StackPanel x:Name="EmptyStatePanel" 
+                                        VerticalAlignment="Center" 
+                                        HorizontalAlignment="Center">
+                                <TextBlock Text="No Game Selected" 
+                                           FontSize="14" 
+                                           FontWeight="SemiBold" 
+                                           Foreground="{StaticResource TextSecondaryBrush}" 
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="Search and select a game on the left to begin" 
+                                           FontSize="11" 
+                                           Foreground="{StaticResource TextSecondaryBrush}" 
+                                           HorizontalAlignment="Center" 
+                                           Margin="0,4,0,0"/>
+                            </StackPanel>
+
+                            <Grid x:Name="DownloadPanel" Visibility="Collapsed">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.Row="0" Margin="0,0,0,16">
+                                    <TextBlock x:Name="SelectedGameTitleText" 
+                                               Text="Game Name" 
+                                               FontSize="16" 
+                                               FontWeight="Bold" 
+                                               Foreground="White"
+                                               TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock x:Name="SelectedGameIdText" 
+                                               Text="AppID: 0" 
+                                               FontSize="12" 
+                                               Foreground="{StaticResource TextSecondaryBrush}" 
+                                               Margin="0,2,0,0"/>
+                                    <Separator Background="{StaticResource BorderBrush}" Margin="0,10,0,0"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="DOWNLOAD VIA RYUU" 
+                                               FontSize="12" 
+                                               FontWeight="Bold" 
+                                               Foreground="{StaticResource AccentBrush}" 
+                                               HorizontalAlignment="Center" />
+                                    <TextBlock Text="Downloads will be fetched directly from generator.ryuu.lol" 
+                                               FontSize="11" 
+                                               Foreground="{StaticResource TextSecondaryBrush}" 
+                                               HorizontalAlignment="Center" 
+                                               Margin="0,4,0,0"/>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="2" Margin="0,10,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="10" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <Button Grid.Column="0" 
+                                                Content="Get Manifest" 
+                                                Style="{StaticResource AccentButtonStyle}" 
+                                                Padding="10,10"
+                                                FontSize="12"
+                                                Click="DownloadManifest_Click" />
+                                                
+                                        <Button Grid.Column="2" 
+                                                Content="Get Lua Script" 
+                                                Style="{StaticResource AccentButtonStyle}" 
+                                                Padding="10,10"
+                                                FontSize="12"
+                                                Click="DownloadLua_Click" />
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <Grid Grid.Row="3" Margin="0,0,0,10">
+            <Border Background="{StaticResource ConsoleBgBrush}" 
+                    BorderBrush="{StaticResource BorderBrush}" 
+                    BorderThickness="1" 
+                    CornerRadius="6">
+                <TextBox x:Name="LogTextBox"
+                         Background="Transparent"
+                         Foreground="#e0e0e0"
+                         BorderThickness="0"
+                         FontFamily="Consolas, Courier New"
+                         FontSize="12"
+                         AcceptsReturn="True"
+                         IsReadOnly="True"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         Padding="12"/>
+            </Border>
+        </Grid>
+
+        <Grid Grid.Row="4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Grid.Column="0" 
+                       x:Name="StatusTextBlock" 
+                       Text="Status: Ready" 
+                       FontSize="11" 
+                       VerticalAlignment="Center"
+                       Foreground="{StaticResource TextSecondaryBrush}" />
+
+            <Button Grid.Column="1" 
+                    Content="⟳ Restart Steam" 
+                    Style="{StaticResource ModernButtonStyle}" 
+                    Padding="12,5" 
+                    FontSize="11"
+                    Margin="0,0,12,0"
+                    Click="RestartSteamButton_Click" />
+            
+            <TextBlock Grid.Column="2" 
+                       Text="v1.0.0" 
+                       FontSize="11" 
+                       VerticalAlignment="Center"
+                       Foreground="{StaticResource TextSecondaryBrush}" />
+        </Grid>
+    </Grid>
+</Window>

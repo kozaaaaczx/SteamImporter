@@ -1,0 +1,9 @@
+bin/
+obj/
+dist/
+dist2/
+MockFiles/
+MockSteam/
+*.user
+*.suo
+.vs/
