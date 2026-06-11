@@ -25,7 +25,7 @@ The standalone `.exe` will be in the `dist/` folder.
 
 ## Usage
 
-1. Launch the application — it will automatically detect your Steam directory
+1. Launch the application - it will automatically detect your Steam directory
 2. Use **Local File Import** tab to manually select and import `.manifest` and `.lua` files
 3. Use **Online Search & Downloader** tab to search games and download files from Ryuu
 4. Click **Restart Steam** in the bottom bar to restart Steam after importing files
