@@ -18,7 +18,7 @@ A native Windows desktop application for importing `.manifest` and `.lua` files 
 ## Build from Source
 
 ```bash
-dotnet publish -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o dist
+dotnet publish -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o dist
 ```
 
 The standalone `.exe` will be in the `dist/` folder.
