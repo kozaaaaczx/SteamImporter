@@ -49,7 +49,7 @@ namespace Nowy_folder__8_
         private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
 
         private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
-        private const string AppVersion = "1.2.1";
+        private const string AppVersion = "1.2.2";
         private const string GithubOwner = "kozaaaaczx";
         private const string GithubRepo = "SteamImporter";
         private CancellationTokenSource? _searchDebounce;
@@ -57,7 +57,7 @@ namespace Nowy_folder__8_
         public MainWindow()
         {
             InitializeComponent();
-            Log("Steam File Importer v1.2.1 initialized.");
+            Log("Steam File Importer v1.2.2 initialized.");
             DetectSteamPath();
         }
 
