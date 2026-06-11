@@ -299,13 +299,36 @@
                                        Foreground="White" 
                                        HorizontalAlignment="Center" 
                                        Margin="0,0,0,8"/>
-                            <TextBlock Text="Select local .manifest files and copy them to 'depotcache', followed by .lua script files to 'config\stplug-in'." 
+                            <TextBlock Text="Drop .manifest and .lua files here to import them directly into Steam." 
                                        FontSize="12" 
                                        Foreground="{StaticResource TextSecondaryBrush}" 
                                        TextAlignment="Center" 
                                        TextWrapping="Wrap" 
                                        Margin="0,0,0,24" />
-                            
+
+                            <Border x:Name="ImportDropZone"
+                                    Background="{StaticResource ButtonBgBrush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="6"
+                                    Padding="18"
+                                    Margin="0,0,0,24"
+                                    MinHeight="120"
+                                    AllowDrop="True"
+                                    DragEnter="ImportDropZone_DragEnter"
+                                    DragLeave="ImportDropZone_DragLeave"
+                                    DragOver="ImportDropZone_DragOver"
+                                    Drop="ImportDropZone_Drop">
+                                <TextBlock x:Name="ImportDropZoneText"
+                                           Text="Drag .manifest and .lua files here"
+                                           FontSize="12"
+                                           Foreground="{StaticResource TextSecondaryBrush}"
+                                           TextAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           TextWrapping="Wrap" />
+                            </Border>
+
                             <Button Content="Choose and Import Files" 
                                     Style="{StaticResource AccentButtonStyle}" 
                                     Width="300"
@@ -475,7 +498,7 @@
                     Click="RestartSteamButton_Click" />
             
             <TextBlock Grid.Column="2" 
-                       Text="v1.1.1" 
+                       Text="v1.2.0" 
                        FontSize="11" 
                        VerticalAlignment="Center"
                        Foreground="{StaticResource TextSecondaryBrush}" />

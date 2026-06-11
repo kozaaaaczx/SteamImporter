@@ -49,7 +49,7 @@ namespace Nowy_folder__8_
         private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
 
         private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
-        private const string AppVersion = "1.1.1";
+        private const string AppVersion = "1.2.0";
         private const string GithubOwner = "kozaaaaczx";
         private const string GithubRepo = "SteamImporter";
         private CancellationTokenSource? _searchDebounce;
@@ -57,7 +57,7 @@ namespace Nowy_folder__8_
         public MainWindow()
         {
             InitializeComponent();
-            Log("Steam File Importer v1.1.1 initialized.");
+            Log("Steam File Importer v1.2.0 initialized.");
             DetectSteamPath();
         }
 
@@ -368,6 +368,147 @@ namespace Nowy_folder__8_
                 StatusTextBlock.Text = "Status: Import failed";
                 MessageBox.Show($"Import failed: {ex.Message}", "Critical Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void ImportDropZone_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effects = DragDropEffects.Copy;
+                if (FindResource("AccentLightBrush") is System.Windows.Media.Brush highlight)
+                {
+                    ImportDropZone.Background = highlight;
+                }
+                ImportDropZoneText.Text = "Release to import dropped files";
+            }
+            else
+            {
+                e.Effects = DragDropEffects.None;
+            }
+            e.Handled = true;
+        }
+
+        private void ImportDropZone_DragLeave(object sender, DragEventArgs e)
+        {
+            if (FindResource("ButtonBgBrush") is System.Windows.Media.Brush normal)
+            {
+                ImportDropZone.Background = normal;
+            }
+            ImportDropZoneText.Text = "Drag .manifest and .lua files here";
+            e.Handled = true;
+        }
+
+        private void ImportDropZone_DragOver(object sender, DragEventArgs e)
+        {
+            e.Effects = e.Data.GetDataPresent(DataFormats.FileDrop) ? DragDropEffects.Copy : DragDropEffects.None;
+            e.Handled = true;
+        }
+
+        private void ImportDropZone_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                ImportFiles(files);
+            }
+
+            if (FindResource("ButtonBgBrush") is System.Windows.Media.Brush normal)
+            {
+                ImportDropZone.Background = normal;
+            }
+            ImportDropZoneText.Text = "Drag .manifest and .lua files here";
+            e.Handled = true;
+        }
+
+        private void ImportFiles(IEnumerable<string> files)
+        {
+            string steamPath = SteamPathTextBox.Text.Trim();
+            if (string.IsNullOrEmpty(steamPath) || !Directory.Exists(steamPath))
+            {
+                Log("[ERROR] Cannot import: The selected Steam directory is empty or does not exist.");
+                MessageBox.Show("Please select a valid Steam directory first.", "Invalid Steam Directory", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var manifestFiles = files.Where(f => string.Equals(Path.GetExtension(f), ".manifest", StringComparison.OrdinalIgnoreCase)).ToList();
+            var luaFiles = files.Where(f => string.Equals(Path.GetExtension(f), ".lua", StringComparison.OrdinalIgnoreCase)).ToList();
+
+            if (!manifestFiles.Any() && !luaFiles.Any())
+            {
+                MessageBox.Show("Please drop only .manifest or .lua files.", "Unsupported Files", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            Log("\n=== STARTING IMPORT PROCESS ===");
+            StatusTextBlock.Text = "Status: Importing dropped files...";
+
+            int manifestsCopied = 0;
+            int luasCopied = 0;
+
+            if (manifestFiles.Any())
+            {
+                string targetDir = Path.Combine(steamPath, "depotcache");
+                if (!Directory.Exists(targetDir))
+                {
+                    Directory.CreateDirectory(targetDir);
+                    Log($"Created directory: {targetDir}");
+                }
+
+                foreach (string file in manifestFiles)
+                {
+                    try
+                    {
+                        string fileName = Path.GetFileName(file);
+                        string destPath = Path.Combine(targetDir, fileName);
+                        File.Copy(file, destPath, overwrite: true);
+                        Log($"  + Copied manifest: {fileName} -> \\depotcache\\");
+                        manifestsCopied++;
+                    }
+                    catch (Exception copyEx)
+                    {
+                        Log($"  [ERROR] Failed to copy manifest '{Path.GetFileName(file)}': {copyEx.Message}");
+                    }
+                }
+                Log($"[INFO] Finished importing manifests. Total copied: {manifestsCopied}");
+            }
+
+            if (luaFiles.Any())
+            {
+                string targetDir = Path.Combine(steamPath, "config", "stplug-in");
+                if (!Directory.Exists(targetDir))
+                {
+                    Directory.CreateDirectory(targetDir);
+                    Log($"Created directory: {targetDir}");
+                }
+
+                foreach (string file in luaFiles)
+                {
+                    try
+                    {
+                        string fileName = Path.GetFileName(file);
+                        string destPath = Path.Combine(targetDir, fileName);
+                        File.Copy(file, destPath, overwrite: true);
+                        Log($"  + Copied LUA script: {fileName} -> \\config\\stplug-in\\");
+                        luasCopied++;
+                    }
+                    catch (Exception copyEx)
+                    {
+                        Log($"  [ERROR] Failed to copy LUA script '{Path.GetFileName(file)}': {copyEx.Message}");
+                    }
+                }
+                Log($"[INFO] Finished importing LUA scripts. Total copied: {luasCopied}");
+            }
+
+            Log("=== IMPORT PROCESS COMPLETED ===");
+            Log($"Summary: Copied {manifestsCopied} .manifest file(s) and {luasCopied} .lua script(s).");
+            StatusTextBlock.Text = $"Status: Import Complete ({manifestsCopied} manifests, {luasCopied} luas)";
+
+            MessageBox.Show(
+                $"Import operation complete!\n\nManifest files copied: {manifestsCopied}\nLua scripts copied: {luasCopied}", 
+                "Import Complete", 
+                MessageBoxButton.OK, 
+                MessageBoxImage.Information
+            );
         }
 
         private async void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
