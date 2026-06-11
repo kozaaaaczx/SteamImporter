@@ -12,7 +12,8 @@
         MinHeight="550"
         WindowStartupLocation="CenterScreen"
         Background="#121212"
-        SourceInitialized="Window_SourceInitialized">
+        SourceInitialized="Window_SourceInitialized"
+        Loaded="Window_Loaded">
 
     <Window.Resources>
         <SolidColorBrush x:Key="BgBrush" Color="#121212" />
@@ -474,7 +475,7 @@
                     Click="RestartSteamButton_Click" />
             
             <TextBlock Grid.Column="2" 
-                       Text="v1.0.0" 
+                       Text="v1.1.1" 
                        FontSize="11" 
                        VerticalAlignment="Center"
                        Foreground="{StaticResource TextSecondaryBrush}" />

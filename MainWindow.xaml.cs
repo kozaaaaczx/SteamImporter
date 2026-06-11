@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -30,24 +31,44 @@ namespace Nowy_folder__8_
         public List<SteamSearchResultItem> items { get; set; } = new();
     }
 
+    public class GitHubReleaseAsset
+    {
+        public string name { get; set; } = "";
+        public string browser_download_url { get; set; } = "";
+    }
+
+    public class GitHubRelease
+    {
+        public string tag_name { get; set; } = "";
+        public List<GitHubReleaseAsset> assets { get; set; } = new();
+    }
+
     public partial class MainWindow : Window
     {
         [DllImport("dwmapi.dll")]
         private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
 
         private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
+        private const string AppVersion = "1.1.1";
+        private const string GithubOwner = "kozaaaaczx";
+        private const string GithubRepo = "SteamImporter";
         private CancellationTokenSource? _searchDebounce;
 
         public MainWindow()
         {
             InitializeComponent();
-            Log("Steam File Importer v1.0.0 initialized.");
+            Log("Steam File Importer v1.1.1 initialized.");
             DetectSteamPath();
         }
 
         private void Window_SourceInitialized(object sender, EventArgs e)
         {
             SetDarkTitleBar();
+        }
+
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            await CheckForUpdatesAsync();
         }
 
         private void SetDarkTitleBar()
@@ -136,6 +157,72 @@ namespace Nowy_folder__8_
                 StatusTextBlock.Text = "Status: Steam directory not found. Please browse manually.";
                 Log("[WARNING] Could not automatically locate Steam installation. Please use \"Browse...\" to select the Steam folder.");
             }
+        }
+
+        private async Task CheckForUpdatesAsync()
+        {
+            try
+            {
+                using var client = new HttpClient();
+                client.DefaultRequestHeaders.UserAgent.ParseAdd($"SteamImporter/{AppVersion}");
+                string endpoint = $"https://api.github.com/repos/{GithubOwner}/{GithubRepo}/releases/latest";
+                string json = await client.GetStringAsync(endpoint);
+                var release = JsonSerializer.Deserialize<GitHubRelease>(json);
+
+                if (release == null || string.IsNullOrWhiteSpace(release.tag_name))
+                    return;
+
+                if (!TryParseReleaseTag(release.tag_name, out Version? latestVersion))
+                    return;
+
+                if (!Version.TryParse(AppVersion, out Version? currentVersion))
+                    currentVersion = new Version(0, 0);
+
+                if (latestVersion <= currentVersion)
+                {
+                    Log($"[UPDATE] Current version {AppVersion} is up to date.");
+                    return;
+                }
+
+                var asset = release.assets?.FirstOrDefault(a => a.name.Contains("win-x64.zip", StringComparison.OrdinalIgnoreCase))
+                            ?? release.assets?.FirstOrDefault(a => a.name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase));
+
+                if (asset == null)
+                    return;
+
+                string tempPath = Path.Combine(Path.GetTempPath(), $"SteamImporter-{release.tag_name}.zip");
+                await DownloadReleaseAssetAsync(asset.browser_download_url, tempPath);
+
+                Log($"[UPDATE] New version {release.tag_name} downloaded to {tempPath}");
+                StatusTextBlock.Text = $"Status: Update downloaded ({release.tag_name})";
+                Process.Start(new ProcessStartInfo("explorer.exe", $"/select,\"{tempPath}\"") { UseShellExecute = true });
+            }
+            catch (Exception ex)
+            {
+                Log($"[UPDATE] Update check failed: {ex.Message}");
+            }
+        }
+
+        private static bool TryParseReleaseTag(string tag, out Version? version)
+        {
+            version = null;
+            if (tag.StartsWith("v", StringComparison.OrdinalIgnoreCase))
+            {
+                tag = tag.Substring(1);
+            }
+
+            return Version.TryParse(tag, out version);
+        }
+
+        private static async Task DownloadReleaseAssetAsync(string url, string destinationPath)
+        {
+            using var client = new HttpClient();
+            using var response = await client.GetAsync(url);
+            response.EnsureSuccessStatusCode();
+
+            using var stream = await response.Content.ReadAsStreamAsync();
+            using var fileStream = File.Create(destinationPath);
+            await stream.CopyToAsync(fileStream);
         }
 
         private void BrowseButton_Click(object sender, RoutedEventArgs e)
