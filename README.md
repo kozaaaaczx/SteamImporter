@@ -4,11 +4,11 @@ A native Windows desktop application for importing `.manifest` and `.lua` files 
 
 ## Features
 
-- **Auto-detect Steam** — Automatically finds your Steam installation from the Windows registry
-- **Local File Import** — Select `.manifest` and `.lua` files from your computer and copy them to the correct Steam folders (`depotcache` and `config\stplug-in`)
-- **Online Search & Download** — Search Steam games by name or AppID and download manifest/lua files directly via the Ryuu API
-- **Restart Steam** — One-click button to gracefully restart Steam (shutdown + relaunch)
-- **Dark Mode UI** — Clean, modern dark theme built with WPF
+- **Auto-detect Steam** - Automatically finds your Steam installation from the Windows registry
+- **Local File Import** - Select `.manifest` and `.lua` files from your computer and copy them to the correct Steam folders (`depotcache` and `config\stplug-in`)
+- **Online Search & Download** - Search Steam games by name or AppID and download manifest/lua files directly via the Ryuu API
+- **Restart Steam** - One-click button to gracefully restart Steam (shutdown + relaunch)
+- **Dark Mode UI** - Clean, modern dark theme built with WPF
 
 ## Requirements
 
