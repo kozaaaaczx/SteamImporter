@@ -498,7 +498,7 @@
                     Click="RestartSteamButton_Click" />
             
             <TextBlock Grid.Column="2" 
-                       Text="v1.2.0" 
+                       Text="v1.2.1" 
                        FontSize="11" 
                        VerticalAlignment="Center"
                        Foreground="{StaticResource TextSecondaryBrush}" />
